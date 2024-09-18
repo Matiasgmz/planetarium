@@ -1,0 +1,13 @@
+<configuration>
+    <property>
+        <name>hbase.zookeeper.quorum</name>
+        <value>zookeeper</value>
+        <description>Hôte Zookeeper pour HBase</description>
+    </property>
+
+    <property>
+        <name>hbase.zookeeper.property.clientPort</name>
+        <value>2181</value>
+        <description>Port client de Zookeeper</description>
+    </property>
+</configuration>

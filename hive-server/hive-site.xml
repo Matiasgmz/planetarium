@@ -1,0 +1,27 @@
+<configuration>
+    <!-- Configuration pour que Hive utilise HBase -->
+    <property>
+        <name>hive.zookeeper.quorum</name>
+        <value>zookeeper:2181</value>
+        <description>Zookeeper quorum pour HBase</description>
+    </property>
+
+    <property>
+        <name>hive.hbase.table.locking</name>
+        <value>true</value>
+        <description>Activer le verrouillage des tables HBase pour éviter les écritures
+            concurrentes.</description>
+    </property>
+
+    <property>
+        <name>hive.metastore.schema.verification</name>
+        <value>false</value>
+        <description>Désactiver la vérification du schéma du metastore pour HBase.</description>
+    </property>
+
+    <property>
+        <name>hive.metastore.warehouse.dir</name>
+        <value>/opt/hive/warehouse</value>
+        <description>Emplacement de l'entrepôt Hive.</description>
+    </property>
+</configuration>

@@ -1,0 +1,11 @@
+fastapi==0.103.1  # Version actuelle, peut être mise à jour
+uvicorn==0.22.0  # Serveur ASGI pour FastAPI
+pydantic==1.10.11  # Validation des données pour FastAPI
+flask==2.0.2  # Framework web Flask
+
+# Bibliothèque pour se connecter à Hive
+PyHive==0.7.0  # Pour la connexion à Hive
+
+# Si vous utilisez Thrift pour TCLIService
+thrift==0.16.0  # Nécessaire pour l'interaction avec Hive via Thrift
+Werkzeug==2.0.3  # Nécessaire pour Flask
