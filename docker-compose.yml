@@ -1,21 +1,21 @@
 version: "3"
 
 services:
-  namenode:
-    image: bde2020/hadoop-namenode:2.0.0-hadoop3.2.1-java8
-    container_name: namenode
-    network_mode: "bridge"
-    restart: always
-    ports:
-      - 9870:9870
-      - 9000:9000
-    volumes:
-      - hadoop_namenode:/hadoop/dfs/name
-      - ./myhadoop:/myhadoop
-    environment:
-      - CLUSTER_NAME=test
-    env_file:
-      - ./hadoop.env
+  # namenode:
+  #   image: bde2020/hadoop-namenode:2.0.0-hadoop3.2.1-java8
+  #   container_name: namenode
+  #   network_mode: "bridge"
+  #   restart: always
+  #   ports:
+  #     - 9870:9870
+  #     - 9000:9000
+  #   volumes:
+  #     - hadoop_namenode:/hadoop/dfs/name
+  #     - ./myhadoop:/myhadoop
+  #   environment:
+  #     - CLUSTER_NAME=test
+  #   env_file:
+  #     - ./hadoop.env
     
 
   datanode:
@@ -93,7 +93,21 @@ services:
       KAFKA_LOG_RETENTION_BYTES: 1073741824
     depends_on:
       - zookeeper
-
+  namenode:
+    build: ./hadoop  # Utilise l'image Docker que vous avez construite
+    container_name: hadoop-namenode
+    ports:
+      - "9870:9870"  # Port pour l'interface Web du NameNode
+      - "8088:8088"  # Port pour l'interface Web de ResourceManager (YARN)
+      - "9001:9000"  # Port pour accéder au système de fichiers HDFS
+    volumes:
+      - ./data:/usr/local/hadoop/hdfs  # Monte un volume local pour persister les données
+    environment:
+      - HADOOP_HOME=/usr/local/hadoop
+      - HADOOP_CONF_DIR=/usr/local/hadoop/etc/hadoop
+      - JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
+      - CLUSTER_NAME=test
+    command: bash -c "/usr/sbin/sshd && bash"  # Démarre SSH et un shell interactif
 
   zookeeper:
     image: wurstmeister/zookeeper

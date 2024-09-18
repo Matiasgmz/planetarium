@@ -39,16 +39,12 @@
 # CMD ["hive", "--service", "metastore"]
 
 # Use the latest stable Debian image
-FROM debian:latest
+FROM ubuntu:20.04
  
 # Environment variables for Hadoop, HBase, and Hive versions
-ENV HADOOP_VERSION=3.4.0
-ENV HBASE_VERSION=2.6.0
 ENV HIVE_VERSION=4.0.0
-ENV HADOOP_HOME=/opt/hadoop
-ENV HBASE_HOME=/opt/hbase
 ENV HIVE_HOME=/opt/hive
-ENV PATH=$PATH:$HADOOP_HOME/bin:$HBASE_HOME/bin:$HIVE_HOME/bin
+ENV PATH=$PATH:$HIVE_HOME/bin
 # RUN echo "deb http://archive.debian.org/debian stretch main" >> /etc/apt/sources.list
 
 # RUN echo "deb-src http://archive.debian.org/debian stretch main" >> /etc/apt/sources.list 
@@ -57,45 +53,32 @@ ENV PATH=$PATH:$HADOOP_HOME/bin:$HBASE_HOME/bin:$HIVE_HOME/bin
  
 # Install necessary packages
 RUN apt-get update && apt-get install -y \
-wget
- 
-# Download and install Hadoop
-RUN wget https://downloads.apache.org/hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz && \
-    tar -xvzf hadoop-${HADOOP_VERSION}.tar.gz && \
-    mv hadoop-${HADOOP_VERSION} /opt/hadoop && \
-    rm hadoop-${HADOOP_VERSION}.tar.gz
- 
-# Download and install HBase
-RUN wget https://downloads.apache.org/hbase/${HBASE_VERSION}/hbase-${HBASE_VERSION}-bin.tar.gz && \
-    tar -xvzf hbase-${HBASE_VERSION}-bin.tar.gz && \
-    mv hbase-${HBASE_VERSION} /opt/hbase && \
-    rm hbase-${HBASE_VERSION}-bin.tar.gz
+wget \
+openjdk-11-jdk \
+ssh \
+rsync \
+less \
+vim \
+net-tools \
+procps \
+curl
  
 # Download and install Hive
 RUN wget https://downloads.apache.org/hive/hive-${HIVE_VERSION}/apache-hive-${HIVE_VERSION}-bin.tar.gz && \
     tar -xvzf apache-hive-${HIVE_VERSION}-bin.tar.gz && \
     mv apache-hive-${HIVE_VERSION}-bin /opt/hive && \
     rm apache-hive-${HIVE_VERSION}-bin.tar.gz
- 
-# Set Hadoop configuration
-COPY core-site.xml $HADOOP_HOME/etc/hadoop/
-COPY hdfs-site.xml $HADOOP_HOME/etc/hadoop/
-COPY yarn-site.xml $HADOOP_HOME/etc/hadoop/
-COPY mapred-site.xml $HADOOP_HOME/etc/hadoop/
- 
-# Set HBase configuration
-COPY hbase-site.xml $HBASE_HOME/conf/
+
+ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
+ENV PATH=$JAVA_HOME/bin:$PATHENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
+ENV PATH=$JAVA_HOME/bin:$PATH
  
 # Set Hive configuration
 COPY hive-site.xml $HIVE_HOME/conf/
  
 # Expose ports for HDFS, YARN, HBase, and Hive
-EXPOSE 50070 8088 16010 10000
+EXPOSE 10000
  
 # Start Hadoop services (Namenode, Datanode, ResourceManager, and NodeManager)
 CMD service ssh start && \
-    $HADOOP_HOME/bin/hdfs namenode -format && \
-    $HADOOP_HOME/sbin/start-dfs.sh && \
-    $HADOOP_HOME/sbin/start-yarn.sh && \
-    $HBASE_HOME/bin/start-hbase.sh && \
     hive --service metastore
